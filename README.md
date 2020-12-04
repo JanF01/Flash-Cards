@@ -1,24 +1,5 @@
 # flashcards
 
-## Project setup
-```
-npm install
-```
+## Vue.js project
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+The main purpose of this application is to make learning for the 2021 Polish Highschool Exam simpler for all the people willing to use my app.
