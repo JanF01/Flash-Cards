@@ -1,0 +1,56 @@
+@mixin borderRadius($r) {
+  -webkit-border-radius: $r;
+  -moz-border-radius: $r;
+  -ms-border-radius: $r;
+  border-radius: $r;
+}
+@mixin borderLeftRadius($r) {
+  -webkit-border-bottom-left-radius: $r;
+  -moz-border-bottom-left-radius: $r;
+  -ms-border-bottom-left-radius: $r;
+  border-bottom-left-radius: $r;
+  -webkit-border-top-left-radius: $r;
+  -moz-border-top-left-radius: $r;
+  -ms-border-top-left-radius: $r;
+  border-top-left-radius: $r;
+}
+@mixin borderRightRadius($r) {
+  -webkit-border-bottom-right-radius: $r;
+  -moz-border-bottom-right-radius: $r;
+  -ms-border-bottom-right-radius: $r;
+  border-bottom-right-radius: $r;
+  -webkit-border-top-right-radius: $r;
+  -moz-border-top-right-radius: $r;
+  -ms-border-top-right-radius: $r;
+  border-top-right-radius: $r;
+}
+@mixin borderTopRightRadius($r) {
+  -webkit-border-top-right-radius: $r;
+  -moz-border-top-right-radius: $r;
+  -ms-border-top-right-radius: $r;
+  border-top-right-radius: $r;
+}
+@mixin borderBottomRightRadius($r) {
+  -webkit-border-bottom-right-radius: $r;
+  -moz-border-bottom-right-radius: $r;
+  -ms-border-bottom-right-radius: $r;
+  border-bottom-right-radius: $r;
+}
+@mixin flexCenter() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin noUserSelect() {
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+}
+
+@mixin noAppearance() {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -ms-progress-appearance: none;
+}
