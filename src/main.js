@@ -3,14 +3,22 @@ import App from "./App.vue";
 import store from "./store";
 import { router } from "./helpers";
 import VueRouter from "vue-router";
+import draggable from "vuedraggable";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faAngleDown,
+  faAngleRight,
+  faAngleLeft,
   faAngleDoubleRight,
   faAngleDoubleUp,
   faAngleDoubleLeft,
   faAngleDoubleDown,
+  faSignOutAlt,
+  faCog,
+  faPlus,
+  faTimes,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import VueToast from "vue-toast-notification";
@@ -22,12 +30,21 @@ library.add(
   faAngleDown,
   faAngleDoubleRight,
   faAngleDoubleUp,
+  faAngleRight,
+  faAngleLeft,
   faAngleDoubleLeft,
-  faAngleDoubleDown
+  faAngleDoubleDown,
+  faSignOutAlt,
+  faCog,
+  faPlus,
+  faTimes,
+  faTrash
 );
 
 Vue.use(VueToast);
 Vue.use(VueRouter);
+
+Vue.component("draggable", draggable);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 

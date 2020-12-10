@@ -12,6 +12,9 @@ export const alert = {
     error({ commit }, message) {
       commit("error", message);
     },
+    default({ commit }, message) {
+      commit("default", message);
+    },
     clear({ commit }) {
       commit("clear");
     },
@@ -24,6 +27,11 @@ export const alert = {
     },
     error(state, message) {
       state.type = "error";
+      state.message = message;
+      throwAlert(state.message, state.type, 3500, "top");
+    },
+    default(state, message) {
+      state.type = "default";
       state.message = message;
       throwAlert(state.message, state.type, 3500, "top");
     },

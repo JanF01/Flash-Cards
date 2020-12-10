@@ -16,6 +16,7 @@ export default {
 body {
   width: 100%;
   margin: 0 auto;
-  height: 100vh;
+  min-height: 100vh;
+  background: rgb(29, 8, 18);
 }
 </style>

@@ -1,14 +1,19 @@
 import { userService } from "../services";
 import { router } from "../helpers";
+import { tokenToData } from "../helpers";
 
 const user = JSON.parse(localStorage.getItem("user"));
 const initialState = user
   ? { status: { loggedIn: true }, user }
   : { status: {}, user: null };
+const userData = tokenToData(user);
 
 export const authentication = {
   namespaced: true,
-  state: initialState,
+  state: {
+    initialState: initialState,
+    userData: userData,
+  },
   actions: {
     login({ dispatch, commit }, { username, password }) {
       commit("loginRequest", { username });
@@ -39,6 +44,7 @@ export const authentication = {
         (user) => {
           if (user.token) {
             commit("loginSuccess", user);
+            this.userData = tokenToData(user);
             router.push("/panel");
           } else if (user == "Nazwa użytkownika zajęta") {
             dispatch("alert/error", "This username is already in use", {
@@ -65,7 +71,7 @@ export const authentication = {
       state.user = user;
     },
     loginSuccess(state, user) {
-      state.status = { loggedIn: true };
+      this.userData = tokenToData(user);
       state.user = user;
     },
     loginFailure(state) {

@@ -2,8 +2,18 @@
   <div class="login">
     <section>
       <h1>SIGN IN</h1>
-      <input type="text" placeholder="Login*" v-model="username" />
-      <input type="password" placeholder="Password*" v-model="password" />
+      <input
+        type="text"
+        placeholder="Login*"
+        v-model="username"
+        @keyup="checkIfEnter"
+      />
+      <input
+        type="password"
+        placeholder="Password*"
+        v-model="password"
+        @keyup="checkIfEnter"
+      />
       <h2 class="change">
         You don't have an account yet?
         <a v-on:click="goToRegister()">Register</a>
@@ -32,12 +42,22 @@ export default {
     goToRegister() {
       this.$store.dispatch("changeSignAction", "register");
     },
+    checkIfEnter(e) {
+      if (e.keyCode == 13 || e.which == 13 || e.key == "enter") {
+        this.handleSubmit();
+      }
+    },
     handleSubmit() {
       this.submitted = true;
       const { username, password } = this;
       const { dispatch } = this.$store;
       if (username && password) {
         dispatch("authentication/login", { username, password });
+      } else {
+        dispatch(
+          "alert/error",
+          "Make sure to fill in your username and your password"
+        );
       }
     },
   },

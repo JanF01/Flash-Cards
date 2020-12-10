@@ -39,7 +39,7 @@ export default {
 @import "../mixins/mixins.scss";
 #start {
   min-width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
