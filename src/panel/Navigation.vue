@@ -30,7 +30,7 @@
           <div class="line"></div>
         </div>
       </div>
-      <div class="flashcard-list" v-if="cards">
+      <div class="flashcard-list" v-on:click="switchList" v-if="cards">
         <span
           >FLASHCARD<br />
           LIST</span
@@ -115,6 +115,10 @@ export default {
     },
     backToGroups() {
       this.$store.dispatch("changeAddingStatus", false);
+      this.$store.dispatch("changeListStatus", false);
+    },
+    switchList() {
+      this.$store.dispatch("changeListStatus", null);
     },
   },
   computed: {

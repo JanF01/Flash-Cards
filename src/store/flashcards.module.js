@@ -11,8 +11,25 @@ export const flashcards = {
     importance: 1,
     one_sided: 0,
     id: -1,
+    list: [],
   },
   actions: {
+    deleteFlashCard({ commit, state, dispatch }, data) {
+      flashcardService
+        .deleteFlashCard(state.list[data.id].id)
+        .then((response) => {
+          if (response == "success") {
+            commit("deleteFlashCard", { dispatch });
+            state.list.splice(data.id, 1);
+          } else {
+            dispatch(
+              "alert/error",
+              "There happened to be a conflict while deleting the card",
+              { root: true }
+            );
+          }
+        });
+    },
     createFlashCard({ commit, dispatch }, data) {
       flashcardService
         .addFlashCard(
@@ -34,21 +51,48 @@ export const flashcards = {
           } else {
             dispatch(
               "alert/error",
-              "There happened to be a confict while creating the flashcard",
+              "There happened to be a conflict while creating the flashcard",
               { root: true }
             );
           }
         });
+    },
+    getFlashCards({ commit, dispatch }, data) {
+      flashcardService.getFlashCards(data.group_id).then((response) => {
+        if (response && response != "Błąd" && response != undefined) {
+          commit("getFlashCards", response);
+        } else {
+          dispatch(
+            "alert/error",
+            "There happened to be a conflict while downloading the flashcards",
+            { root: true }
+          );
+        }
+      });
     },
     setValues({ commit }, data) {
       commit("setValues", data);
     },
   },
   mutations: {
+    deleteFlashCard(state, { dispatch }) {
+      dispatch("alert/info", "Flashcard deleted", {
+        root: true,
+      });
+    },
+    getFlashCards(state, data) {
+      state.list = [];
+      state.list = data;
+    },
     createFlashCard(state, { dispatch }) {
       dispatch("alert/success", "The flashcard has been created", {
         root: true,
       });
+      dispatch(
+        "flashcards/getFlashCards",
+        { group_id: state.group_id },
+        { root: true }
+      );
     },
     setValues(state, payload) {
       state.group_id = payload.group_id;

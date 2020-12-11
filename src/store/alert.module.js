@@ -6,6 +6,9 @@ export const alert = {
     message: null,
   },
   actions: {
+    info({ commit }, message) {
+      commit("info", message);
+    },
     success({ commit }, message) {
       commit("success", message);
     },
@@ -20,6 +23,11 @@ export const alert = {
     },
   },
   mutations: {
+    info(state, message) {
+      state.type = "info";
+      state.message = message;
+      throwAlert(state.message, state.type, 3500, "top");
+    },
     success(state, message) {
       state.type = "success";
       state.message = message;

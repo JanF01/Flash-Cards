@@ -62,6 +62,11 @@ export default {
         });
     },
     openAddingFlashCard() {
+      const { dispatch } = this.$store;
+      dispatch("flashcards/getFlashCards", {
+        group_id: this.id,
+      });
+
       this.$store.dispatch("changeAddingStatus", true);
       this.$store.dispatch("flashcards/setValues", {
         group_title: this.title,

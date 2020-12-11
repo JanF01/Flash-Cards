@@ -1,12 +1,13 @@
 <template>
   <div id="deletepopup">
     <div class="container">
-      <h2>
-        Are you sure you want to delete this group?<br />
+      <h2 v-if="!list">
+        Do you really want to delete this group?<br />
         All the created cards will be deleted with it!
       </h2>
+      <h2 v-if="list">Do you really want to delete this card?<br /></h2>
       <div class="buttons">
-        <button v-on:click="deleteGroup">
+        <button v-on:click="del">
           YES
         </button>
         <button v-on:click="closeDeletePopup">
@@ -37,8 +38,29 @@ export default {
 
       this.closeDeletePopup();
     },
+    deleteCard() {
+      const { dispatch } = this.$store;
+
+      dispatch("flashcards/deleteFlashCard", {
+        id: this.$store.state.deletingId,
+      });
+
+      this.closeDeletePopup();
+    },
+    del() {
+      if (this.list) {
+        this.deleteCard();
+      } else {
+        this.deleteGroup();
+      }
+    },
     closeDeletePopup() {
-      this.$store.dispatch("changeDeletingStatus", false);
+      this.$store.dispatch("changeDeletingStatus", { s: false, id: -1 });
+    },
+  },
+  computed: {
+    list() {
+      return this.$store.state.checkingList;
     },
   },
   components: {},
@@ -65,7 +87,7 @@ export default {
   h2 {
     color: white;
     font-family: "Manrope", sans-serif;
-    font-size: 1.2em;
+    font-size: 1.05em;
     letter-spacing: 0.1em;
     padding: 1.4em 2.2em 1em 2.2em;
     font-weight: 500;

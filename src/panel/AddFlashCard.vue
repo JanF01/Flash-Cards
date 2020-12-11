@@ -1,11 +1,11 @@
 <template>
   <div id="addflash">
     <p><img src="../assets/list.png" /> {{ title }}</p>
-    <div class="switch" v-on:click="switchSide">
+    <div class="switch" v-on:click="switchSide" v-if="!list">
       <span>ONE SIDED</span>
       <div class="ball"></div>
     </div>
-    <div class="sides">
+    <div class="sides" v-if="!list">
       <div class="front">
         <div class="fake-textarea" v-on:click="focusOnArea('tx1')">
           <span v-on:click="question = ''"
@@ -35,17 +35,21 @@
         </div>
       </div>
     </div>
-    <div class="buttons">
+    <div class="buttons" v-if="!list">
       <button class="confirm" v-on:click="createFlashCard" v-if="!edit">
         Add Flash Card
       </button>
 
       <button class="save" v-if="edit">Save Flash Card</button>
     </div>
+    <div class="list">
+      <FlashCardList v-if="list" />
+    </div>
   </div>
 </template>
 
 <script>
+import FlashCardList from "./List/FlashCardList";
 export default {
   name: "AddFlashCard",
   data: () => {
@@ -56,6 +60,7 @@ export default {
       oneside: 0,
       card_id: -1,
       edit: false,
+      list: false,
     };
   },
   methods: {
@@ -115,6 +120,9 @@ export default {
     id() {
       return this.$store.state.flashcards.id;
     },
+    checkingList() {
+      return this.$store.state.flashcards.list;
+    },
   },
   watch: {
     back(newValue) {
@@ -132,7 +140,11 @@ export default {
     id(newValue) {
       this.card_id = newValue;
     },
+    checkingList(newValue) {
+      this.list = newValue;
+    },
   },
+  components: { FlashCardList },
 };
 </script>
 

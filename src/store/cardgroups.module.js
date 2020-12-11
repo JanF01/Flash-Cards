@@ -29,7 +29,7 @@ export const cardgroups = {
         } else {
           dispatch(
             "alert/error",
-            "There happened to be a confict while deleting the group",
+            "There happened to be a conflict while deleting the group",
             { root: true }
           );
         }
@@ -45,7 +45,7 @@ export const cardgroups = {
           } else {
             dispatch(
               "alert/error",
-              "There happened to be a confict while editing the group",
+              "There happened to be a conflict while editing the group",
               { root: true }
             );
           }
@@ -62,7 +62,7 @@ export const cardgroups = {
             } else {
               dispatch(
                 "alert/error",
-                "There happened to be a confict while creating the group",
+                "There happened to be a conflict while creating the group",
                 { root: true }
               );
             }
@@ -154,7 +154,6 @@ export const cardgroups = {
         state.groups[response[i].x][response[i].y] = response[i];
       }
 
-      console.log(state.groups);
       for (let i = 0; i < 10; i++) {
         for (let y = 0; y < 10; y++) {
           if (typeof state.groups[i][y] === "undefined") {
@@ -170,7 +169,6 @@ export const cardgroups = {
     },
     moveRight(state, { dispatch }) {
       if (state.offset < 5) {
-        console.log(state.offset);
         state.offset++;
       } else {
         dispatch("alert/error", "That's the limit", { root: true });

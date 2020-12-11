@@ -2,7 +2,48 @@ import { baseUrl } from "./config";
 
 export const flashcardService = {
   addFlashCard,
+  getFlashCards,
+  deleteFlashCard,
 };
+
+function deleteFlashCard(id) {
+  var user = JSON.parse(localStorage.getItem("user"));
+  var jwt = user.token;
+
+  var requestOptions = {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jwt: jwt,
+      id: id,
+    }),
+  };
+
+  return fetch(`${baseUrl}/cards/delete_card`, requestOptions)
+    .then(handleResponse)
+    .then((resp) => {
+      return resp;
+    });
+}
+
+function getFlashCards(group) {
+  var user = JSON.parse(localStorage.getItem("user"));
+  var jwt = user.token;
+
+  var requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+
+  return fetch(
+    `${baseUrl}/cards/get_cards?jwt=` + jwt + `&group=` + group,
+    requestOptions
+  )
+    .then(handleResponse)
+    .then((resp) => {
+      return resp;
+    });
+}
 
 function addFlashCard(group, front, back, importance, one_sided) {
   var user = JSON.parse(localStorage.getItem("user"));

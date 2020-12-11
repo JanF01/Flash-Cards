@@ -15,11 +15,16 @@ export default new Vuex.Store({
     signAction: "login",
     newAlert: false,
     editingGroup: false,
-    deletingGroup: false,
+    deleting: false,
+    deletingId: -1,
     addingFlashCard: false,
+    checkingList: false,
     groupForEdit: { title: "", id: 0, color: "#000000DF" },
   },
   actions: {
+    changeListStatus({ commit }, data) {
+      commit("changeListStatus", data);
+    },
     changeAddingStatus({ commit }, data) {
       commit("changeAddingStatus", data);
     },
@@ -43,11 +48,16 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    changeListStatus(state, data) {
+      if (data === null) state.checkingList = !state.checkingList;
+      else state.checkingList = data;
+    },
     changeAddingStatus(state, payload) {
       state.addingFlashCard = payload;
     },
     changeDeletingStatus(state, payload) {
-      state.deletingGroup = payload;
+      state.deleting = payload.s;
+      state.deletingId = payload.id;
     },
     changeEditingStatus(state, payload) {
       state.editingGroup = !state.editingGroup;
