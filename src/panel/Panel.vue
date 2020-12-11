@@ -1,34 +1,37 @@
 <template>
   <div id="panel">
     <Navigation />
-    <draggable
-      v-for="cardGroupColumn of cardGroupColumns.slice(
-        this.$store.state.cardgroups.offset,
-        this.$store.state.cardgroups.offset + 5
-      )"
-      :key="cardGroupColumn.id"
-      :list="cardGroupColumn"
-      tag="ul"
-      group="columns"
-      @end="moveEnd()"
-      :animation="230"
-      filter=".no-drag"
-      ghost-class="moving-group"
-      :move="checkMove"
-    >
-      <li v-for="cardgroup of cardGroupColumn" :key="cardgroup.id">
-        <CardGroup
-          v-bind:color="cardgroup.color"
-          v-bind:title="cardgroup.name"
-          v-bind:id="cardgroup.id"
-          v-bind:owner="cardgroup.owner"
-          v-bind:amount="cardgroup.amount"
-          v-bind:pos_x="cardgroup.x"
-          v-bind:pos_y="cardgroup.y"
-        />
-      </li>
-    </draggable>
+    <div v-if="!addingFlashCard">
+      <draggable
+        v-for="cardGroupColumn of cardGroupColumns.slice(
+          this.$store.state.cardgroups.offset,
+          this.$store.state.cardgroups.offset + 5
+        )"
+        :key="cardGroupColumn.id"
+        :list="cardGroupColumn"
+        tag="ul"
+        group="columns"
+        @end="moveEnd()"
+        :animation="230"
+        filter=".no-drag"
+        ghost-class="moving-group"
+        :move="checkMove"
+      >
+        <li v-for="cardgroup of cardGroupColumn" :key="cardgroup.id">
+          <CardGroup
+            v-bind:color="cardgroup.color"
+            v-bind:title="cardgroup.name"
+            v-bind:id="cardgroup.id"
+            v-bind:owner="cardgroup.owner"
+            v-bind:amount="cardgroup.amount"
+            v-bind:pos_x="cardgroup.x"
+            v-bind:pos_y="cardgroup.y"
+          />
+        </li>
+      </draggable>
+    </div>
     <AddGroup v-if="newGroup || editGroup" v-bind:edit="editGroup" />
+    <AddFlashCard v-if="addingFlashCard" />
   </div>
 </template>
 
@@ -36,6 +39,7 @@
 import Navigation from "./Navigation";
 import CardGroup from "./CardGroup";
 import AddGroup from "./AddGroup";
+import AddFlashCard from "./AddFlashCard";
 export default {
   name: "Panel",
   data: function() {
@@ -87,6 +91,9 @@ export default {
     editGroup() {
       return this.$store.state.editingGroup;
     },
+    addingFlashCard() {
+      return this.$store.state.addingFlashCard;
+    },
     offset() {
       return this.$store.state.cardgroups.offset;
     },
@@ -101,7 +108,7 @@ export default {
       }, 70);
     },
   },
-  components: { Navigation, CardGroup, AddGroup },
+  components: { Navigation, CardGroup, AddGroup, AddFlashCard },
   methods: {
     checkMove(e) {
       return e.to.children.length < 10;
@@ -138,8 +145,7 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url("../assets/backgroundStyle.png");
-  background-repeat: repeat;
+  background: #1a1a1d;
 
   Navigation {
     position: fixed;

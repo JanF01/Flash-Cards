@@ -5,10 +5,10 @@
       <li class="plus" v-on:click="changeNewGroupState(true)">
         NEW FLASH CARD GROUP <span><font-awesome-icon icon="plus"/></span>
       </li>
-      <div class="arrow left" v-on:click="moveColumnsLeft()">
+      <div class="arrow left" v-on:click="moveColumnsLeft()" v-if="!cards">
         <font-awesome-icon icon="angle-left" />
       </div>
-      <div class="arrow right" v-on:click="moveColumnsRight()">
+      <div class="arrow right" v-on:click="moveColumnsRight()" v-if="!cards">
         <font-awesome-icon icon="angle-right" />
       </div>
       <li>
@@ -17,6 +17,29 @@
       <li v-on:click="handleSubmit()">
         LOG OUT <font-awesome-icon icon="sign-out-alt" />
       </li>
+      <div class="back-to-groups" v-on:click="backToGroups" v-if="cards">
+        <span>
+          PANEL
+        </span>
+        <div class="lin">
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <div class="lin">
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+      <div class="flashcard-list" v-if="cards">
+        <span
+          >FLASHCARD<br />
+          LIST</span
+        >
+        <div class="bar" v-for="item of [0, 1, 2]" :key="item.id">
+          <div class="srect"></div>
+          <div class="rect"></div>
+        </div>
+      </div>
     </ul>
     <ul class="mobile">
       <img
@@ -24,10 +47,10 @@
         class="mobile-logo"
         v-on:click="changeNewGroupState(false)"
       />
-      <div class="arrow left" v-on:click="moveColumnsLeft()">
+      <div class="arrow left" v-on:click="moveColumnsLeft()" v-if="!cards">
         <font-awesome-icon icon="angle-left" />
       </div>
-      <div class="arrow right" v-on:click="moveColumnsRight()">
+      <div class="arrow right" v-on:click="moveColumnsRight()" v-if="!cards">
         <font-awesome-icon icon="angle-right" />
       </div>
       <div
@@ -66,6 +89,7 @@ export default {
   data: () => {
     return {
       menuOpen: false,
+      cards: false,
     };
   },
   methods: {
@@ -89,10 +113,21 @@ export default {
     openMenu() {
       this.menuOpen = !this.menuOpen;
     },
+    backToGroups() {
+      this.$store.dispatch("changeAddingStatus", false);
+    },
   },
   computed: {
     userData() {
       return this.$store.state.authentication.userData;
+    },
+    addingCards() {
+      return this.$store.state.addingFlashCard;
+    },
+  },
+  watch: {
+    addingCards(newValue) {
+      this.cards = newValue;
     },
   },
 };
@@ -215,54 +250,122 @@ export default {
       left: calc(50% - 1.25em);
       width: 2.5em;
     }
-    .menu-trigger {
-      width: 2.3em;
-      position: fixed;
-      top: 0.3em;
-      right: 1em;
-      cursor: pointer;
-      .line {
-        width: 100%;
-        height: 0.6em;
+    @include sm {
+      display: flex;
+    }
+  }
+  .flashcard-list {
+    position: absolute;
+    top: 13em;
+    left: 1.8em;
+    cursor: pointer;
+    transition: all 0.2s;
+    span {
+      display: block;
+      font-size: 1.2em;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+    .bar {
+      display: flex;
+      margin-top: 0.8em;
+      position: relative;
+      left: 1.3em;
+      .srect {
+        height: 1em;
+        width: 0.9em;
         background: white;
-        margin-top: 0.4em;
+        transition: all 0.2s;
       }
-      .lin {
-        display: flex;
-        .line {
-          width: 30%;
-          margin-left: 10%;
-          transition: all 0.3s;
+      .rect {
+        transition: all 0.2s;
+        width: 4em;
+        height: 1em;
+        margin-left: 0.5em;
+        background: white;
+      }
+    }
+    &:hover {
+      transform: scale(0.9);
+      .bar {
+        .rect {
+          margin-left: 0em;
         }
       }
-      transition: all 0.3s;
-      &.close {
-        .lin {
-          &:nth-child(1) {
-            .line {
-              &:nth-child(1) {
-                transform: scale(1.4) rotate(45deg);
-              }
-              &:nth-child(2) {
-                transform: scale(1.4) rotate(-45deg);
-              }
+    }
+  }
+
+  .menu-trigger,
+  .back-to-groups {
+    width: 2.3em;
+    position: fixed;
+    top: 0.3em;
+    right: 1em;
+    cursor: pointer;
+    .line {
+      width: 100%;
+      height: 0.6em;
+      background: white;
+      margin-top: 0.4em;
+    }
+    .lin {
+      display: flex;
+      .line {
+        width: 30%;
+        margin-left: 10%;
+        transition: all 0.3s;
+      }
+    }
+    transition: all 0.3s;
+    &.close {
+      .lin {
+        &:nth-child(1) {
+          .line {
+            &:nth-child(1) {
+              transform: scale(1.4) rotate(45deg);
+            }
+            &:nth-child(2) {
+              transform: scale(1.4) rotate(-45deg);
             }
           }
-          &:nth-child(2) {
-            .line {
-              &:nth-child(1) {
-                transform: scale(1.4) rotate(-45deg);
-              }
-              &:nth-child(2) {
-                transform: scale(1.4) rotate(45deg);
-              }
+        }
+        &:nth-child(2) {
+          .line {
+            &:nth-child(1) {
+              transform: scale(1.4) rotate(-45deg);
+            }
+            &:nth-child(2) {
+              transform: scale(1.4) rotate(45deg);
             }
           }
         }
       }
     }
-    @include sm {
-      display: flex;
+  }
+  .back-to-groups {
+    display: block;
+    position: absolute;
+    width: 6em;
+    top: 5.9em;
+    right: calc(100% - 9em);
+    span {
+      position: absolute;
+      top: -1.4em;
+      left: 0.35em;
+      font-size: 1.3em;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    .line {
+      width: 100%;
+      height: 1.67em;
+      background: white;
+      margin-top: 0.5em;
+    }
+    &:hover {
+      transform: scale(0.89);
     }
   }
 }

@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import { alert } from "./alert.module";
 import { authentication } from "./authentication.module";
 import { cardgroups } from "./cardgroups.module";
+import { flashcards } from "./flashcards.module";
 
 Vue.use(Vuex);
 
@@ -14,9 +15,17 @@ export default new Vuex.Store({
     signAction: "login",
     newAlert: false,
     editingGroup: false,
+    deletingGroup: false,
+    addingFlashCard: false,
     groupForEdit: { title: "", id: 0, color: "#000000DF" },
   },
   actions: {
+    changeAddingStatus({ commit }, data) {
+      commit("changeAddingStatus", data);
+    },
+    changeDeletingStatus({ commit }, data) {
+      commit("changeDeletingStatus", data);
+    },
     changeEditingStatus({ commit }, data) {
       commit("changeEditingStatus", data);
     },
@@ -34,6 +43,12 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    changeAddingStatus(state, payload) {
+      state.addingFlashCard = payload;
+    },
+    changeDeletingStatus(state, payload) {
+      state.deletingGroup = payload;
+    },
     changeEditingStatus(state, payload) {
       state.editingGroup = !state.editingGroup;
       setTimeout(() => {
@@ -59,5 +74,6 @@ export default new Vuex.Store({
     alert,
     authentication,
     cardgroups,
+    flashcards,
   },
 });

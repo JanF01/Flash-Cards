@@ -1,6 +1,6 @@
 <template>
   <div id="addgroup">
-    <div class="container" v-bind:class="{ editing: edit }">
+    <div class="container">
       <h2>NAME</h2>
       <input type="text" v-model="name" maxlength="45" />
       <h2>COLOR</h2>
@@ -35,7 +35,12 @@
         E
       </span>
     </div>
-    <DeletePopup v-if="deletepopup" v-bind:id="id" v-bind:x="x" v-bind:y="y" />
+    <DeletePopup
+      v-if="deletingGroup"
+      v-bind:id="id"
+      v-bind:x="x"
+      v-bind:y="y"
+    />
   </div>
 </template>
 
@@ -54,7 +59,6 @@ export default {
       id: 0,
       owner: "0",
       amount: 0,
-      deletepopup: false,
       x: 0,
       y: 0,
     };
@@ -62,6 +66,9 @@ export default {
   computed: {
     groupForEdit() {
       return this.$store.state.groupForEdit;
+    },
+    deletingGroup() {
+      return this.$store.state.deletingGroup;
     },
   },
   watch: {
@@ -115,7 +122,7 @@ export default {
       }
     },
     askForDelete() {
-      this.deletepopup = true;
+      this.$store.dispatch("changeDeletingStatus", true);
     },
   },
   components: { CardGroup, DeletePopup },
@@ -151,14 +158,14 @@ export default {
       position: absolute;
       top: 0.5em;
       left: 0.5em;
-      color: $dark_red;
+      color: $white;
       text-align: center;
       font-weight: 700;
-      line-height: 1.2em;
+      line-height: 1.25em;
       cursor: pointer;
       transition: 0.2s all;
       &:hover {
-        line-height: 1.4em;
+        transform: scale(0.9);
       }
     }
     @include borderRadius(0.2em);
@@ -248,24 +255,6 @@ export default {
       cursor: pointer;
       @include sm {
         margin-top: 13%;
-      }
-    }
-
-    &.editing {
-      background: linear-gradient(
-        to bottom right,
-        rgb(189, 105, 2) 50%,
-        rgb(201, 131, 3) 50.1%
-      ) !important;
-      button {
-        background: linear-gradient(
-          180deg,
-          rgb(148, 83, 3) 90%,
-          rgb(255, 255, 255) 90.1%
-        );
-      }
-      .shut {
-        background: rgb(201, 131, 3);
       }
     }
 

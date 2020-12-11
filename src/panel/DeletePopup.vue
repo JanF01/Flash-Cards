@@ -9,7 +9,7 @@
         <button v-on:click="deleteGroup">
           YES
         </button>
-        <button>
+        <button v-on:click="closeDeletePopup">
           NO
         </button>
       </div>
@@ -34,6 +34,11 @@ export default {
         x: this.x,
         y: this.y,
       });
+
+      this.closeDeletePopup();
+    },
+    closeDeletePopup() {
+      this.$store.dispatch("changeDeletingStatus", false);
     },
   },
   components: {},
