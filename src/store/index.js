@@ -18,11 +18,15 @@ export default new Vuex.Store({
     deleting: false,
     deletingId: -1,
     editingId: -1,
+    revising: false,
     addingFlashCard: false,
     checkingList: false,
     groupForEdit: { title: "", id: 0, color: "#000000DF" },
   },
   actions: {
+    changeReviseStatus({ commit }, data) {
+      commit("changeReviseStatus", data);
+    },
     changeListStatus({ commit }, data) {
       commit("changeListStatus", data);
     },
@@ -49,6 +53,9 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    changeReviseStatus(state, data) {
+      state.revising = data;
+    },
     changeListStatus(state, data) {
       state.checkingList = data;
     },

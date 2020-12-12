@@ -14,6 +14,7 @@ export const flashcards = {
     one_sided: 0,
     id: -1,
     list: [],
+    cardsToRevise: [],
   },
   actions: {
     deleteFlashCard({ commit, state, dispatch }, data) {
@@ -127,6 +128,33 @@ export const flashcards = {
     getFlashCards(state, data) {
       state.list = [];
       state.list = data;
+
+      var dateArray = [];
+      var dateParts = [];
+      var now = new Date() / 1000;
+
+      state.cardsToRevise = [];
+
+      for (let i = 0; i < state.list.length; i++) {
+        dateArray = state.list[i].last_check.split(" ");
+        dateParts = [dateArray[0].split("-"), dateArray[1].split(":")];
+
+        let secondsSince =
+          new Date(
+            dateParts[0][0],
+            dateParts[0][1] - 1,
+            dateParts[0][2],
+            dateParts[1][0],
+            dateParts[1][1],
+            dateParts[1][2]
+          ) / 1000;
+
+        let delay = state.list[i].seconds;
+        let difference = now - secondsSince;
+
+        if (difference >= delay) state.cardsToRevise.push(state.list[i]);
+      }
+      console.log(state.cardsToRevise);
     },
     editFlashCard(state, { dispatch }) {
       dispatch("alert/success", "The flashcard has been edited", {

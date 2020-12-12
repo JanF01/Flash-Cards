@@ -1,7 +1,7 @@
 <template>
   <div id="panel">
     <Navigation />
-    <div v-if="!addingFlashCard">
+    <div v-if="!addingFlashCard && !reviseFlashCard">
       <draggable
         v-for="cardGroupColumn of cardGroupColumns.slice(
           this.$store.state.cardgroups.offset,
@@ -32,6 +32,7 @@
     </div>
     <AddGroup v-if="newGroup || editGroup" v-bind:edit="editGroup" />
     <AddFlashCard v-if="addingFlashCard" />
+    <ReviseCard v-if="reviseFlashCard" />
   </div>
 </template>
 
@@ -40,6 +41,7 @@ import Navigation from "./Navigation";
 import CardGroup from "./CardGroup";
 import AddGroup from "./AddGroup";
 import AddFlashCard from "./AddFlashCard";
+import ReviseCard from "./ReviseCard";
 export default {
   name: "Panel",
   data: function() {
@@ -94,6 +96,9 @@ export default {
     addingFlashCard() {
       return this.$store.state.addingFlashCard;
     },
+    reviseFlashCard() {
+      return this.$store.state.revising;
+    },
     offset() {
       return this.$store.state.cardgroups.offset;
     },
@@ -108,7 +113,7 @@ export default {
       }, 70);
     },
   },
-  components: { Navigation, CardGroup, AddGroup, AddFlashCard },
+  components: { Navigation, CardGroup, AddGroup, AddFlashCard, ReviseCard },
   methods: {
     checkMove(e) {
       return e.to.children.length < 10;

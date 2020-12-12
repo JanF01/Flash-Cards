@@ -5,10 +5,18 @@
       <li class="plus" v-on:click="changeNewGroupState(true)">
         NEW FLASH CARD GROUP <span><font-awesome-icon icon="plus"/></span>
       </li>
-      <div class="arrow left" v-on:click="moveColumnsLeft()" v-if="!cards">
+      <div
+        class="arrow left"
+        v-on:click="moveColumnsLeft()"
+        v-if="!cards && !reviewingCards"
+      >
         <font-awesome-icon icon="angle-left" />
       </div>
-      <div class="arrow right" v-on:click="moveColumnsRight()" v-if="!cards">
+      <div
+        class="arrow right"
+        v-on:click="moveColumnsRight()"
+        v-if="!cards && !reviewingCards"
+      >
         <font-awesome-icon icon="angle-right" />
       </div>
       <li>
@@ -17,7 +25,11 @@
       <li v-on:click="handleSubmit()">
         LOG OUT <font-awesome-icon icon="sign-out-alt" />
       </li>
-      <div class="back-to-groups" v-on:click="backToGroups" v-if="cards">
+      <div
+        class="back-to-groups"
+        v-on:click="backToGroups"
+        v-if="cards || reviewingCards"
+      >
         <span>
           PANEL
         </span>
@@ -99,6 +111,7 @@ export default {
     return {
       menuOpen: false,
       cards: false,
+      reviewing: false,
     };
   },
   methods: {
@@ -124,6 +137,7 @@ export default {
     },
     backToGroups() {
       this.$store.dispatch("changeAddingStatus", false);
+      this.$store.dispatch("changeReviseStatus", false);
       this.$store.dispatch("changeListStatus", false);
     },
     switchList() {
@@ -152,6 +166,9 @@ export default {
     addingCards() {
       return this.$store.state.addingFlashCard;
     },
+    reviewingCards() {
+      return this.$store.state.revising;
+    },
     list() {
       return this.$store.state.checkingList;
     },
@@ -159,6 +176,9 @@ export default {
   watch: {
     addingCards(newValue) {
       this.cards = newValue;
+    },
+    reviewingCards(newValue) {
+      this.reviewing = newValue;
     },
   },
 };

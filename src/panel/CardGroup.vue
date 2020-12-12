@@ -18,7 +18,7 @@
           </span>
         </div>
       </div>
-      <div class="buton learn no-drag">
+      <div class="buton learn no-drag" v-on:click="openRevisingFlashCard">
         <div class="no-drag">
           Revise Flash Cards
         </div>
@@ -79,6 +79,13 @@ export default {
         one_sided: 0,
         id: -1,
       });
+    },
+    openRevisingFlashCard() {
+      const { dispatch } = this.$store;
+      dispatch("flashcards/getFlashCards", {
+        group_id: this.id,
+      });
+      this.$store.dispatch("changeReviseStatus", true);
     },
   },
 };
