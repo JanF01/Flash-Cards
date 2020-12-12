@@ -5,7 +5,9 @@
       {{ title }}
     </div>
     <div class="edit">
-      <span><font-awesome-icon icon="edit"></font-awesome-icon></span>
+      <span v-on:click="editFlashcard"
+        ><font-awesome-icon icon="edit"></font-awesome-icon
+      ></span>
       <span v-on:click="openDeletePopup"
         ><font-awesome-icon icon="trash"></font-awesome-icon
       ></span>
@@ -28,7 +30,24 @@ export default {
     title: String,
   },
   methods: {
+    editFlashcard() {
+      this.$store.dispatch("changeListStatus", false);
+      this.$store.dispatch("flashcards/setValues", {
+        card_id: this.id,
+      });
+      window.scrollTo(0, 0);
+    },
     openDeletePopup() {
+      this.$store.dispatch("flashcards/setValues", {
+        group_title: this.$store.state.flashcards.group_title,
+        group_id: this.$store.state.flashcards.group_id,
+        amount: this.amount,
+        back: "",
+        front: "",
+        importance: 1,
+        one_sided: 0,
+        id: -1,
+      });
       this.$store.dispatch("changeDeletingStatus", { s: true, id: this.id });
     },
   },

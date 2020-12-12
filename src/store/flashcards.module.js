@@ -6,6 +6,8 @@ export const flashcards = {
     group_id: 0,
     group_title: "",
     amount: -1,
+    saveBack: "",
+    saveFront: "",
     back: "",
     front: "",
     importance: 1,
@@ -25,6 +27,33 @@ export const flashcards = {
             dispatch(
               "alert/error",
               "There happened to be a conflict while deleting the card",
+              { root: true }
+            );
+          }
+        });
+    },
+    editFlashCard({ commit, state, dispatch }, data) {
+      flashcardService
+        .editFlashCard(
+          data.front,
+          data.back,
+          data.importance,
+          data.one_sided,
+          state.id
+        )
+        .then((response) => {
+          if (response == "success") {
+            commit("editFlashCard", { dispatch });
+          } else if (response == "empty card") {
+            dispatch(
+              "alert/error",
+              "One of the sides is empty. Use one sided option if needed.",
+              { root: true }
+            );
+          } else {
+            dispatch(
+              "alert/error",
+              "There happened to be a conflict while editing the flashcard",
               { root: true }
             );
           }
@@ -70,8 +99,23 @@ export const flashcards = {
         }
       });
     },
-    setValues({ commit }, data) {
-      commit("setValues", data);
+    setValues({ commit, state }, data) {
+      if (data.card_id != undefined) {
+        if (state.id == -1) {
+          state.saveBack = state.back;
+          state.saveFront = state.front;
+        }
+        commit("setValues", {
+          group_id: state.group_id,
+          group_title: state.group_title,
+          amount: state.amount,
+          back: state.list[data.card_id].back,
+          front: state.list[data.card_id].front,
+          importance: state.list[data.card_id].importance,
+          one_sided: parseInt(state.list[data.card_id].one_sided),
+          id: state.list[data.card_id].id,
+        });
+      } else commit("setValues", data);
     },
   },
   mutations: {
@@ -84,6 +128,16 @@ export const flashcards = {
       state.list = [];
       state.list = data;
     },
+    editFlashCard(state, { dispatch }) {
+      dispatch("alert/success", "The flashcard has been edited", {
+        root: true,
+      });
+      dispatch(
+        "flashcards/getFlashCards",
+        { group_id: state.group_id },
+        { root: true }
+      );
+    },
     createFlashCard(state, { dispatch }) {
       dispatch("alert/success", "The flashcard has been created", {
         root: true,
@@ -93,6 +147,8 @@ export const flashcards = {
         { group_id: state.group_id },
         { root: true }
       );
+      state.front = "";
+      state.back = "";
     },
     setValues(state, payload) {
       state.group_id = payload.group_id;
@@ -100,6 +156,11 @@ export const flashcards = {
       state.amount = payload.amount;
       state.back = payload.back;
       state.front = payload.front;
+      if (state.back.length < 1 && state.front.length < 1) {
+        state.back = state.saveBack;
+        state.front = state.saveFront;
+      }
+
       state.importance = payload.importance;
       state.one_sided = payload.one_sided;
       state.id = payload.id;

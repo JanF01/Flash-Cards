@@ -17,6 +17,7 @@ export default new Vuex.Store({
     editingGroup: false,
     deleting: false,
     deletingId: -1,
+    editingId: -1,
     addingFlashCard: false,
     checkingList: false,
     groupForEdit: { title: "", id: 0, color: "#000000DF" },
@@ -49,8 +50,7 @@ export default new Vuex.Store({
   },
   mutations: {
     changeListStatus(state, data) {
-      if (data === null) state.checkingList = !state.checkingList;
-      else state.checkingList = data;
+      state.checkingList = data;
     },
     changeAddingStatus(state, payload) {
       state.addingFlashCard = payload;

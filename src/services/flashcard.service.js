@@ -4,6 +4,7 @@ export const flashcardService = {
   addFlashCard,
   getFlashCards,
   deleteFlashCard,
+  editFlashCard,
 };
 
 function deleteFlashCard(id) {
@@ -39,6 +40,30 @@ function getFlashCards(group) {
     `${baseUrl}/cards/get_cards?jwt=` + jwt + `&group=` + group,
     requestOptions
   )
+    .then(handleResponse)
+    .then((resp) => {
+      return resp;
+    });
+}
+
+function editFlashCard(front, back, importance, one_sided, id) {
+  var user = JSON.parse(localStorage.getItem("user"));
+  var jwt = user.token;
+
+  var requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jwt: jwt,
+      front: front,
+      back: back,
+      importance: importance,
+      one_sided: one_sided,
+      id: id,
+    }),
+  };
+
+  return fetch(`${baseUrl}/cards/edit_card`, requestOptions)
     .then(handleResponse)
     .then((resp) => {
       return resp;

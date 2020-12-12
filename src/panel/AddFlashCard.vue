@@ -1,8 +1,22 @@
 <template>
   <div id="addflash">
     <p><img src="../assets/list.png" /> {{ title }}</p>
-    <div class="switch" v-on:click="switchSide" v-if="!list">
+    <div
+      class="switch"
+      v-on:click="switchSide"
+      v-if="!list"
+      v-bind:class="{ one_sided: oneside }"
+    >
       <span>ONE SIDED</span>
+      <div class="ball"></div>
+    </div>
+    <div
+      class="switchImportance"
+      v-on:click="changeImportance"
+      v-if="!list"
+      v-bind:class="{ two: imp == 2, three: imp == 3 }"
+    >
+      <span>IMPORTANCE</span>
       <div class="ball"></div>
     </div>
     <div class="sides" v-if="!list">
@@ -40,7 +54,9 @@
         Add Flash Card
       </button>
 
-      <button class="save" v-if="edit">Save Flash Card</button>
+      <button class="save" v-on:click="editFlashCard" v-if="edit">
+        Save Flash Card
+      </button>
     </div>
     <div class="list">
       <FlashCardList v-if="list" />
@@ -67,26 +83,36 @@ export default {
     autoGrow(e) {
       e.target.style.height = "5px";
       e.target.style.height = e.target.scrollHeight + "px";
+      this.$store.state.flashcards.front = this.question;
+      this.$store.state.flashcards.back = this.answer;
     },
     focusOnArea(id) {
       document.getElementById(id).focus();
     },
     switchSide() {
-      if (!this.oneside) {
-        document.getElementsByClassName("ball")[0].style.left = "3.3em";
-        document.getElementsByClassName("ball")[0].style.background =
-          "rgba(255,255,255,0.6)";
-      } else {
-        document.getElementsByClassName("ball")[0].style.left = "0";
-        document.getElementsByClassName("ball")[0].style.background =
-          "rgba(0, 0, 0, 0.678)";
-      }
       this.oneside = !this.oneside;
+      this.$store.state.flashcards.one_sided = this.oneside;
+    },
+    changeImportance() {
+      this.imp++;
+      if (this.imp == 4) this.imp = 1;
+      this.$store.state.flashcards.importance = this.imp;
     },
     createFlashCard() {
       const { dispatch } = this.$store;
 
       dispatch("flashcards/createFlashCard", {
+        group_id: this.group_id,
+        front: this.question,
+        back: this.answer,
+        importance: this.imp,
+        one_sided: this.oneside,
+      });
+    },
+    editFlashCard() {
+      const { dispatch } = this.$store;
+
+      dispatch("flashcards/editFlashCard", {
         group_id: this.group_id,
         front: this.question,
         back: this.answer,
@@ -121,7 +147,7 @@ export default {
       return this.$store.state.flashcards.id;
     },
     checkingList() {
-      return this.$store.state.flashcards.list;
+      return this.$store.state.checkingList;
     },
   },
   watch: {
@@ -138,6 +164,11 @@ export default {
       this.oneside = newValue;
     },
     id(newValue) {
+      if (newValue != -1) {
+        this.edit = true;
+      } else {
+        this.edit = false;
+      }
       this.card_id = newValue;
     },
     checkingList(newValue) {
@@ -166,7 +197,8 @@ export default {
     margin-top: 9.7vh;
     background: $dark_red;
   }
-  .switch {
+  .switch,
+  .switchImportance {
     position: absolute;
     top: 84vh;
     left: 14%;
@@ -191,7 +223,7 @@ export default {
     }
     .ball {
       @include borderRadius(0.1em);
-      background: rgba(0, 0, 0, 0.678);
+      background: rgba(54, 54, 54, 0.884);
       width: 3.3em;
       height: 2.5em;
       position: absolute;
@@ -199,6 +231,28 @@ export default {
       left: 0em;
       z-index: -1;
       transition: all 0.2s;
+    }
+    &.one_sided {
+      .ball {
+        left: 3.3em;
+        background: rgba(255, 255, 255, 0.6);
+      }
+    }
+    &.two {
+      &.switchImportance .ball {
+        left: 3.3em;
+        background: rgba(177, 131, 7, 0.6);
+      }
+    }
+    &.three {
+      &.switchImportance .ball {
+        left: 6.6em;
+        background: rgba(241, 20, 20, 0.6);
+      }
+    }
+    &.switchImportance {
+      width: 9.3em;
+      left: calc(15% + 6.5em);
     }
   }
   .sides {

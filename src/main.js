@@ -21,6 +21,7 @@ import {
   faTrash,
   faEraser,
   faEdit,
+  faPlusSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import VueToast from "vue-toast-notification";
@@ -42,7 +43,8 @@ library.add(
   faTimes,
   faTrash,
   faEraser,
-  faEdit
+  faEdit,
+  faPlusSquare
 );
 
 Vue.use(VueToast);

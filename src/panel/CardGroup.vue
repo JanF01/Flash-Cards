@@ -68,6 +68,7 @@ export default {
       });
 
       this.$store.dispatch("changeAddingStatus", true);
+      this.$store.dispatch("changeListStatus", false);
       this.$store.dispatch("flashcards/setValues", {
         group_title: this.title,
         group_id: this.id,

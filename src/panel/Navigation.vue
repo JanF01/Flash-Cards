@@ -30,7 +30,7 @@
           <div class="line"></div>
         </div>
       </div>
-      <div class="flashcard-list" v-on:click="switchList" v-if="cards">
+      <div class="flashcard-list" v-on:click="switchList" v-if="cards && !list">
         <span
           >FLASHCARD<br />
           LIST</span
@@ -39,6 +39,15 @@
           <div class="srect"></div>
           <div class="rect"></div>
         </div>
+      </div>
+      <div class="add-flashcard" v-on:click="switchAdd" v-if="cards && list">
+        <span
+          >ADD<br />
+          FLASHCARD</span
+        >
+        <span class="plus"
+          ><font-awesome-icon icon="plus-square"></font-awesome-icon
+        ></span>
       </div>
     </ul>
     <ul class="mobile">
@@ -118,7 +127,22 @@ export default {
       this.$store.dispatch("changeListStatus", false);
     },
     switchList() {
-      this.$store.dispatch("changeListStatus", null);
+      if (this.$store.state.flashcards.id != -1) {
+        this.$store.dispatch("flashcards/setValues", {
+          group_title: this.$store.state.flashcards.group_title,
+          group_id: this.$store.state.flashcards.group_id,
+          amount: this.$store.state.flashcards.amount,
+          back: "",
+          front: "",
+          importance: 1,
+          one_sided: 0,
+          id: -1,
+        });
+      }
+      this.$store.dispatch("changeListStatus", true);
+    },
+    switchAdd() {
+      this.$store.dispatch("changeListStatus", false);
     },
   },
   computed: {
@@ -127,6 +151,9 @@ export default {
     },
     addingCards() {
       return this.$store.state.addingFlashCard;
+    },
+    list() {
+      return this.$store.state.checkingList;
     },
   },
   watch: {
@@ -258,7 +285,8 @@ export default {
       display: flex;
     }
   }
-  .flashcard-list {
+  .flashcard-list,
+  .add-flashcard {
     position: absolute;
     top: 13em;
     left: 1.8em;
@@ -270,6 +298,9 @@ export default {
       text-align: center;
       font-weight: 700;
       letter-spacing: 0.1em;
+      &.plus {
+        font-size: 5em;
+      }
     }
     .bar {
       display: flex;
