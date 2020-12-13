@@ -27,8 +27,8 @@
         <div class="no-drag" v-if="!timestamp">
           {{ changingTime }}
         </div>
-        <div class="no-drag" v-if="timestamp">
-          <font-awesome-icon icon="bell"></font-awesome-icon>
+        <div class="no-drag bell" v-if="timestamp">
+          <font-awesome-icon icon="bell" class="icon"></font-awesome-icon>
         </div>
       </div>
     </div>
@@ -46,6 +46,7 @@ export default {
       timeS: 0,
       time: "",
       timestamp: false,
+      interval: null,
     };
   },
   props: {
@@ -67,6 +68,11 @@ export default {
     },
     changingTime() {
       return this.time;
+    },
+    soon() {
+      return this.$store.getters["flashcards/getSoonest"]({
+        group_id: this.id,
+      });
     },
   },
   methods: {
@@ -145,13 +151,7 @@ export default {
         group_id: this.id,
       });
     },
-  },
-  mounted() {
-    setTimeout(() => {
-      let soon = this.$store.getters["flashcards/getSoonest"]({
-        group_id: this.id,
-      });
-
+    setTime(soon) {
       let dateArray = soon.last_check.split(" ");
       let dateParts = [dateArray[0].split("-"), dateArray[1].split(":")];
 
@@ -198,8 +198,25 @@ export default {
           ? hours + ":" + minutes + ":" + seconds
           : minutes + ":" + seconds;
 
-      setInterval(this.addTime, 1000);
-    }, 300);
+      clearInterval(this.interval);
+      this.interval = setInterval(this.addTime, 1000);
+    },
+  },
+  watch: {
+    soon(newValue) {
+      setTimeout(() => {
+        this.setTime(newValue);
+      }, 100);
+    },
+  },
+  mounted() {
+    setTimeout(() => {
+      this.setTime(
+        this.$store.getters["flashcards/getSoonest"]({
+          group_id: this.id,
+        })
+      );
+    }, 100);
   },
 };
 </script>
@@ -283,8 +300,14 @@ export default {
     top: 2.6em;
     right: 1em;
     font-size: 1.3em;
-    width: 4em;
+    width: 6em;
     text-align: right;
+    .bell {
+      font-size: 1.5em;
+      .icon {
+        animation: bellAnimation 2s infinite;
+      }
+    }
   }
 }
 </style>

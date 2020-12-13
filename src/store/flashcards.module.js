@@ -31,6 +31,7 @@ export const flashcards = {
       flashcardService.resetFlashCards(data.group_id).then((response) => {
         if (response == "success") {
           commit("resetFlashCards", { dispatch });
+          dispatch("getSoonest");
         } else {
           dispatch(
             "alert/error",

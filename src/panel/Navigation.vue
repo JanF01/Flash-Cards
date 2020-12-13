@@ -139,6 +139,7 @@ export default {
       this.$store.dispatch("changeAddingStatus", false);
       this.$store.dispatch("changeReviseStatus", false);
       this.$store.dispatch("changeListStatus", false);
+      this.$store.dispatch("flashcards/getSoonest");
     },
     switchList() {
       if (this.$store.state.flashcards.id != -1) {

@@ -22,7 +22,7 @@
     <div class="sides" v-if="!list">
       <div class="front">
         <div class="fake-textarea" v-on:click="focusOnArea('tx1')">
-          <span v-on:click="question = ''"
+          <span class="erase" v-on:click="question = ''"
             ><font-awesome-icon icon="eraser"></font-awesome-icon
             ><strong>ERASE</strong></span
           >
@@ -30,13 +30,18 @@
             id="tx1"
             v-bind:placeholder="oneside ? 'Content' : 'Question'"
             v-model="question"
-            @input="autoGrow($event)"
+            @keyup="autoGrow($event, 1)"
           ></textarea>
+          <div class="size">
+            <span>CTRL</span><span v-if="sizeOne == 1">AA</span>
+            <span v-if="sizeOne == 2">A<sup>A</sup></span>
+            <span v-if="sizeOne == 0">A<sub>A</sub></span>
+          </div>
         </div>
       </div>
       <div class="back" v-if="!oneside">
         <div class="fake-textarea" v-on:click="focusOnArea('tx2')">
-          <span v-on:click="answer = ''"
+          <span class="erase" v-on:click="answer = ''"
             ><font-awesome-icon icon="eraser"></font-awesome-icon
             ><strong>ERASE</strong></span
           >
@@ -44,8 +49,13 @@
             id="tx2"
             placeholder="Answer"
             v-model="answer"
-            @input="autoGrow($event)"
+            @keyup="autoGrow($event, 2)"
           ></textarea>
+          <div class="size">
+            <span>CTRL</span><span v-if="sizeTwo == 1">AA</span>
+            <span v-if="sizeTwo == 2">A<sup>A</sup></span>
+            <span v-if="sizeTwo == 0">A<sub>A</sub></span>
+          </div>
         </div>
       </div>
     </div>
@@ -77,14 +87,93 @@ export default {
       card_id: -1,
       edit: false,
       list: false,
+      sizeOne: 1,
+      sizeTwo: 1,
     };
   },
   methods: {
-    autoGrow(e) {
-      e.target.style.height = "5px";
-      e.target.style.height = e.target.scrollHeight + "px";
-      this.$store.state.flashcards.front = this.question;
-      this.$store.state.flashcards.back = this.answer;
+    autoGrow(e, w) {
+      this.switchSize(e, w);
+      setTimeout(() => {
+        e.target.style.height = "5px";
+        e.target.style.height = e.target.scrollHeight + "px";
+        this.$store.state.flashcards.front = this.question;
+        this.$store.state.flashcards.back = this.answer;
+      }, 10);
+    },
+
+    switchSize(e, w) {
+      if (e.keyCode != 17) {
+        if (w == 1 && this.sizeOne == 2 && e.keyCode != 8) {
+          let char = this.question.substr(
+            this.question.length - 1,
+            this.question.length
+          );
+          this.question =
+            this.question.substring(0, this.question.length - 1) +
+            "<sup>" +
+            char +
+            "</sup>";
+        } else if (w == 2 && this.sizeTwo == 2 && e.keyCode != 8) {
+          let char = this.answer.substr(
+            this.answer.length - 1,
+            this.answer.length
+          );
+          this.answer =
+            this.answer.substring(0, this.answer.length - 1) +
+            "<sup>" +
+            char +
+            "</sup>";
+        } else if (w == 1 && this.sizeOne == 0 && e.keyCode != 8) {
+          let char = this.question.substr(
+            this.question.length - 1,
+            this.question.length
+          );
+          this.question =
+            this.question.substring(0, this.question.length - 1) +
+            "<sub>" +
+            char +
+            "</sub>";
+        } else if (w == 2 && this.sizeTwo == 0 && e.keyCode != 8) {
+          let char = this.answer.substr(
+            this.answer.length - 1,
+            this.answer.length
+          );
+          this.answer =
+            this.answer.substring(0, this.answer.length - 1) +
+            "<sub>" +
+            char +
+            "</sub>";
+        }
+      }
+      if (e.keyCode == 17 || e.which == 17) {
+        if (w == 1) {
+          switch (this.sizeOne) {
+            case 0:
+              this.sizeOne = 1;
+              break;
+            case 1:
+              this.sizeOne = 2;
+              break;
+            case 2:
+              this.sizeOne = 0;
+              break;
+          }
+        }
+        if (w == 2) {
+          switch (this.sizeTwo) {
+            case 0:
+              this.sizeTwo = 1;
+              break;
+            case 1:
+              this.sizeTwo = 2;
+              break;
+            case 2:
+              this.sizeTwo = 0;
+              break;
+          }
+        }
+      }
     },
     focusOnArea(id) {
       document.getElementById(id).focus();
@@ -189,12 +278,11 @@ export default {
     color: white;
     font-family: "Manrope", sans-serif;
     width: 15em;
-    position: relative;
-    right: 29.8%;
-    bottom: 3em;
+    position: absolute;
+    left: 14%;
+    top: 1.8em;
     text-align: center;
     padding: 1em 0 1em 0em;
-    margin-top: 9.7vh;
     background: $dark_red;
   }
   .switch,
@@ -258,6 +346,7 @@ export default {
   .sides {
     width: 90%;
     margin-left: 3.7%;
+    margin-top: 16vh;
     display: flex;
     justify-content: center;
     .front,
@@ -274,7 +363,7 @@ export default {
         position: relative;
         cursor: text;
         @include flexCenter();
-        span {
+        .erase {
           position: absolute;
           bottom: -0.67em;
           right: 0.3em;
@@ -294,6 +383,17 @@ export default {
           &:hover {
             transform: scale(0.93);
           }
+        }
+        .size {
+          position: absolute;
+          left: 0.3em;
+          bottom: 0.2em;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          font-weight: 500;
+          color: black;
+          letter-spacing: 0.1em;
         }
         textarea {
           resize: none;

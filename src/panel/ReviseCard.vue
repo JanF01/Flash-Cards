@@ -1,8 +1,6 @@
 <template>
   <div id="revise">
-    <div class="fake-textarea">
-      {{ content }}
-    </div>
+    <div class="fake-textarea" v-html="content"></div>
     <div class="buttons" v-if="end">
       <button v-on:click="isHard">Hard</button>
       <button v-on:click="isOk">OK</button>
@@ -32,11 +30,20 @@ export default {
     setUpFlashCard() {
       if (typeof this.list[this.id] !== "undefined") {
         this.content = this.list[this.id].front;
+        let sups = document
+          .getElementsByClassName("fake-textarea")[0]
+          .getElementsByTagName("sup");
+        console.log(sups);
+
+        for (let i = 0; i < sups.length; i++) {
+          sups[i].style.top = "-0.5em";
+        }
         if (parseInt(this.list[this.id].one_sided)) {
           this.end = true;
         }
       } else {
         this.$store.dispatch("changeReviseStatus", false);
+        this.$store.dispatch("flashcards/getSoonest");
       }
     },
     showAnswer() {
@@ -116,8 +123,22 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "../mixins/mixins.scss";
+
+sup {
+  font-size: 80%;
+  position: relative;
+  top: -0.35em;
+  font-weight: 500;
+}
+sub {
+  font-size: 80%;
+  position: relative;
+  top: 0.35em;
+  font-weight: 500;
+}
+
 #revise {
   width: 100%;
   @include flexCenter();
@@ -128,7 +149,7 @@ export default {
     height: 55vh;
     margin-top: 12vh;
     color: black;
-    font-size: 1.2em;
+    font-size: 1.23em;
     font-family: "Manrope", sans-serif;
     cursor: text;
     padding: 3%;

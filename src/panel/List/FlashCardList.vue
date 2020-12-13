@@ -5,6 +5,7 @@
       :key="index"
       v-bind:title="getShortenedTitle(flashcard)"
       v-bind:id="index"
+      class="elem"
     />
   </div>
 </template>
@@ -51,10 +52,13 @@ export default {
 
 <style scoped lang="scss">
 .list {
-  margin-top: 15vh;
   min-width: 100%;
-  ListElement {
-    min-width: 100%;
+
+  .elem {
+    &:nth-child(1) {
+      margin-top: 16vh;
+      min-width: 100%;
+    }
   }
 }
 </style>
