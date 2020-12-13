@@ -12,6 +12,7 @@
       class="reg"
       v-bind:class="{ mobile: this.$store.state.signAction == 'register' }"
     />
+    <Pomodoro v-if="this.$store.state.background == 'pomodoro'" />
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import Logo from "./Logo";
 import Navigation from "./Navigation";
 import Login from "./Login";
 import Register from "./Register";
+import Pomodoro from "./Pomodoro";
 import { router } from "../helpers";
 export default {
   name: "Start",
@@ -28,9 +30,9 @@ export default {
     Navigation,
     Login,
     Register,
+    Pomodoro,
   },
   mounted() {
-    console.log(this.$store);
     if (this.$store.state.authentication.status.loggedIn) router.push("/panel");
   },
 };

@@ -2,7 +2,13 @@
   <div>
     <ul class="navigation">
       <img src="../assets/logo.png" v-on:click="backToMain()" />
-      <li v-on:click="openMenu()" v-if="this.$store.state.background == 'main'">
+      <li
+        v-on:click="openMenu()"
+        v-if="
+          this.$store.state.background == 'main' ||
+            this.$store.state.background == 'pomodoro'
+        "
+      >
         MENU
         <font-awesome-icon icon="angle-double-right" class="menu_arrow" />
         <font-awesome-icon icon="angle-double-up" class="menu_arrow_mobile" />
@@ -22,8 +28,8 @@
       class="menu"
     >
       <li v-on:click="navigateToLogin()">SIGN IN</li>
-      <li>HOW TO USE</li>
       <li>TERMS OF SERVICE</li>
+      <li v-on:click="navigateToPomodoro">POMODORO CLOCK</li>
       <li>CONTACT</li>
     </ul>
   </div>
@@ -41,6 +47,9 @@ export default {
     },
     navigateToLogin() {
       this.$store.commit("changeBackground", "login");
+    },
+    navigateToPomodoro() {
+      this.$store.commit("changeBackground", "pomodoro");
     },
     backToMain() {
       this.$store.commit("changeBackground", "main");
