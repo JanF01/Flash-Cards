@@ -15,8 +15,44 @@ export const flashcards = {
     id: -1,
     list: [],
     cardsToRevise: [],
+    soonest: [],
+  },
+  getters: {
+    getSoonest: (state) => (data) => {
+      for (let i = 0; i < state.soonest.length; i++) {
+        if (state.soonest[i].card_group_id == data.group_id) {
+          return state.soonest[i];
+        }
+      }
+    },
   },
   actions: {
+    resetFlashCards({ commit, dispatch }, data) {
+      flashcardService.resetFlashCards(data.group_id).then((response) => {
+        if (response == "success") {
+          commit("resetFlashCards", { dispatch });
+        } else {
+          dispatch(
+            "alert/error",
+            "There happened to be a conflict while reseting revision time",
+            { root: true }
+          );
+        }
+      });
+    },
+    getSoonest({ commit, dispatch }) {
+      flashcardService.getSoonestCards().then((response) => {
+        if (response && response != "Błąd") {
+          commit("getSoonest", response);
+        } else {
+          dispatch(
+            "alert/error",
+            "There happened to be a conflict while getting cards",
+            { root: true }
+          );
+        }
+      });
+    },
     deleteFlashCard({ commit, state, dispatch }, data) {
       flashcardService
         .deleteFlashCard(state.list[data.id].id)
@@ -87,10 +123,10 @@ export const flashcards = {
           }
         });
     },
-    getFlashCards({ commit, dispatch }, data) {
+    getFlashCards({ commit, dispatch, rootGetters }, data) {
       flashcardService.getFlashCards(data.group_id).then((response) => {
         if (response && response != "Błąd" && response != undefined) {
-          commit("getFlashCards", response);
+          commit("getFlashCards", { dispatch, response, rootGetters });
         } else {
           dispatch(
             "alert/error",
@@ -120,41 +156,66 @@ export const flashcards = {
     },
   },
   mutations: {
+    resetFlashCards(state, { dispatch }) {
+      dispatch(
+        "alert/success",
+        "The revision time for this group has been set to now",
+        {
+          root: true,
+        }
+      );
+    },
+    getSoonest(state, response) {
+      state.soonest = response;
+    },
     deleteFlashCard(state, { dispatch }) {
       dispatch("alert/info", "Flashcard deleted", {
         root: true,
       });
     },
-    getFlashCards(state, data) {
+    getFlashCards(state, { dispatch, response, rootGetters }) {
       state.list = [];
-      state.list = data;
+      state.list = response;
 
-      var dateArray = [];
-      var dateParts = [];
-      var now = new Date() / 1000;
+      if (rootGetters["getRevising"]) {
+        var dateArray = [];
+        var dateParts = [];
+        var now = new Date() / 1000;
 
-      state.cardsToRevise = [];
+        state.cardsToRevise = [];
 
-      for (let i = 0; i < state.list.length; i++) {
-        dateArray = state.list[i].last_check.split(" ");
-        dateParts = [dateArray[0].split("-"), dateArray[1].split(":")];
+        for (let i = 0; i < state.list.length; i++) {
+          dateArray = state.list[i].last_check.split(" ");
+          dateParts = [dateArray[0].split("-"), dateArray[1].split(":")];
 
-        let secondsSince =
-          new Date(
-            dateParts[0][0],
-            dateParts[0][1] - 1,
-            dateParts[0][2],
-            dateParts[1][0],
-            dateParts[1][1],
-            dateParts[1][2]
-          ) / 1000;
+          let secondsSince =
+            new Date(
+              dateParts[0][0],
+              dateParts[0][1] - 1,
+              dateParts[0][2],
+              dateParts[1][0],
+              dateParts[1][1],
+              dateParts[1][2]
+            ) / 1000;
 
-        let delay = state.list[i].seconds;
-        let difference = now - secondsSince;
+          let delay = state.list[i].seconds;
+          let difference = now - secondsSince;
 
-        if (difference >= delay) state.cardsToRevise.push(state.list[i]);
+          if (difference >= delay) state.cardsToRevise.push(state.list[i]);
+        }
+
+        if (state.cardsToRevise.length < 1) {
+          dispatch("changeBeforeRevision", false, { root: true });
+          dispatch(
+            "alert/info",
+            "Nothing to revise yet, you can force the revision in the settings",
+            { root: true }
+          );
+        } else {
+          dispatch("changeBeforeRevision", false, { root: true });
+          dispatch("changeReviseStatus", true, { root: true });
+        }
       }
-      console.log(state.cardsToRevise);
     },
     editFlashCard(state, { dispatch }) {
       dispatch("alert/success", "The flashcard has been edited", {

@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { flashcardService } from "../services";
 export default {
   name: "ReviseCard",
   data: () => {
@@ -29,29 +30,87 @@ export default {
   },
   methods: {
     setUpFlashCard() {
-      this.content = this.list[this.id].front;
-      if (parseInt(this.list[this.is].one_sided)) {
-        this.end = true;
+      if (typeof this.list[this.id] !== "undefined") {
+        this.content = this.list[this.id].front;
+        if (parseInt(this.list[this.id].one_sided)) {
+          this.end = true;
+        }
+      } else {
+        this.$store.dispatch("changeReviseStatus", false);
       }
     },
     showAnswer() {
       this.content = this.list[this.id].back;
       this.end = true;
     },
-    isEasy() {},
-    isOk() {},
-    isHard() {},
-  },
-  computed: {
-    listForRevise() {
-      return this.$store.state.flashcards.cardsToRevise;
+    isEasy() {
+      flashcardService
+        .updateFlashCard(
+          this.list[this.id].id,
+          0,
+          this.list[this.id].seconds,
+          this.list[this.id].importance
+        )
+        .then((response) => {
+          if (response && response == "success") {
+            this.id++;
+            this.end = false;
+            this.setUpFlashCard();
+          } else {
+            this.$store.dispatch(
+              "alert/error",
+              "There happened to be a conflict while reviewing the flashcard"
+            );
+          }
+        });
+    },
+    isOk() {
+      flashcardService
+        .updateFlashCard(
+          this.list[this.id].id,
+          1,
+          this.list[this.id].seconds,
+          this.list[this.id].importance
+        )
+        .then((response) => {
+          if (response && response == "success") {
+            this.id++;
+            this.end = false;
+            this.setUpFlashCard();
+          } else {
+            this.$store.dispatch(
+              "alert/error",
+              "There happened to be a conflict while reviewing the flashcard"
+            );
+          }
+        });
+    },
+    isHard() {
+      flashcardService
+        .updateFlashCard(
+          this.list[this.id].id,
+          2,
+          this.list[this.id].seconds,
+          this.list[this.id].importance
+        )
+        .then((response) => {
+          if (response && response == "success") {
+            this.id++;
+            this.end = false;
+            this.setUpFlashCard();
+          } else {
+            this.$store.dispatch(
+              "alert/error",
+              "There happened to be a conflict while reviewing the flashcard"
+            );
+          }
+        });
     },
   },
-  watch: {
-    listForRevise(newValue) {
-      this.list = newValue;
-      this.setUpFlashCard();
-    },
+  mounted() {
+    this.list = this.$store.state.flashcards.cardsToRevise;
+    this.id = 0;
+    this.setUpFlashCard();
   },
   components: {},
 };

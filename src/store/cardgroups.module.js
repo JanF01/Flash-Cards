@@ -77,6 +77,7 @@ export const cardgroups = {
       groupService.getGroups().then((response) => {
         if (response && response != "Błąd" && response != undefined) {
           commit("updateGroups", { dispatch, response });
+          dispatch("flashcards/getSoonest", null, { root: true });
         } else {
           dispatch("alert/error", "You have no card groups!", { root: true });
         }

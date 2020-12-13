@@ -23,6 +23,14 @@
           Revise Flash Cards
         </div>
       </div>
+      <div class="time no-drag">
+        <div class="no-drag" v-if="!timestamp">
+          {{ changingTime }}
+        </div>
+        <div class="no-drag" v-if="timestamp">
+          <font-awesome-icon icon="bell"></font-awesome-icon>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -30,6 +38,16 @@
 <script>
 export default {
   name: "CardGroup",
+  data: () => {
+    return {
+      timeD: 0,
+      timeH: 0,
+      timeM: 0,
+      timeS: 0,
+      time: "",
+      timestamp: false,
+    };
+  },
   props: {
     title: String,
     id: Number,
@@ -46,6 +64,9 @@ export default {
       } else {
         return this.title;
       }
+    },
+    changingTime() {
+      return this.time;
     },
   },
   methods: {
@@ -80,13 +101,105 @@ export default {
         id: -1,
       });
     },
+    addTime() {
+      this.timeS--;
+      if (this.timeS == -1 && this.timeM > 0) {
+        this.timeM--;
+        this.timeS = 59;
+      } else if (this.timeS == -1 && this.timeH > 0) {
+        this.timeH--;
+        this.timeM = 59;
+        this.timeS = 59;
+      } else if (this.timeS == -1 && this.timeD > 0) {
+        this.timeD--;
+        this.timeH = 24;
+        this.timeM = 59;
+        this.timeS = 59;
+      }
+
+      let h = this.timeH;
+      let m = this.timeM;
+      let s = this.timeS;
+
+      if (this.timeH < 10) {
+        h = "0" + this.timeH;
+      }
+      if (this.timeM < 10) {
+        m = "0" + this.timeM;
+      }
+      if (this.timeS < 10) {
+        s = "0" + this.timeS;
+      }
+
+      this.time =
+        this.timeD != 0
+          ? this.timeD + ":" + h + ":" + m + ":" + s
+          : this.timeH != 0
+          ? h + ":" + m + ":" + s
+          : m + ":" + s;
+    },
     openRevisingFlashCard() {
       const { dispatch } = this.$store;
+      dispatch("changeBeforeRevision", true);
       dispatch("flashcards/getFlashCards", {
         group_id: this.id,
       });
-      this.$store.dispatch("changeReviseStatus", true);
     },
+  },
+  mounted() {
+    setTimeout(() => {
+      let soon = this.$store.getters["flashcards/getSoonest"]({
+        group_id: this.id,
+      });
+
+      let dateArray = soon.last_check.split(" ");
+      let dateParts = [dateArray[0].split("-"), dateArray[1].split(":")];
+
+      let lastReview =
+        new Date(
+          dateParts[0][0],
+          dateParts[0][1] - 1,
+          dateParts[0][2],
+          dateParts[1][0],
+          dateParts[1][1],
+          dateParts[1][2]
+        ) / 1000;
+
+      let now = new Date() / 1000;
+
+      let time = Math.round(soon.seconds - (now - lastReview));
+
+      this.timestamp = time < 0;
+
+      var days = Math.floor(time / 86400);
+      var hours = Math.floor(time / 3600);
+      var minutes = Math.floor((time - hours * 3600) / 60);
+      var seconds = time - hours * 3600 - minutes * 60;
+
+      this.timeD = days;
+      this.timeH = hours;
+      this.timeM = minutes;
+      this.timeS = seconds;
+
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+
+      this.time =
+        this.timeD != 0
+          ? days + ":" + hours + ":" + minutes + ":" + seconds
+          : this.timeH != 0
+          ? hours + ":" + minutes + ":" + seconds
+          : minutes + ":" + seconds;
+
+      setInterval(this.addTime, 1000);
+    }, 300);
   },
 };
 </script>
@@ -164,6 +277,14 @@ export default {
     &.learn {
       top: 6.2em;
     }
+  }
+  .time {
+    position: absolute;
+    top: 2.6em;
+    right: 1em;
+    font-size: 1.3em;
+    width: 4em;
+    text-align: right;
   }
 }
 </style>

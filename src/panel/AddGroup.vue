@@ -17,6 +17,7 @@
         v-bind:owner="owner"
         v-bind:amount="amount"
         class="card"
+        style="pointer-events:none"
       />
       <button v-on:click="saveGroup()" v-if="edit">SAVE CHANGES</button>
       <button v-on:click="createGroup()" v-else>ADD GROUP</button>
@@ -33,6 +34,9 @@
         E<br />
         T<br />
         E
+      </span>
+      <span v-on:click="resetRevision" v-if="edit" class="reset">
+        REVISE ALL NOW
       </span>
     </div>
     <DeletePopup
@@ -124,6 +128,11 @@ export default {
     askForDelete() {
       this.$store.dispatch("changeDeletingStatus", { s: true, id: -1 });
     },
+    resetRevision() {
+      const { dispatch } = this.$store;
+      dispatch("flashcards/resetFlashCards", { group_id: this.id });
+      this.closeCreateGroup();
+    },
   },
   components: { CardGroup, DeletePopup },
 };
@@ -137,7 +146,7 @@ export default {
   left: 0;
   width: 100%;
   min-height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   .container {
     @include noUserSelect();
     width: 30em;
@@ -152,7 +161,6 @@ export default {
       $dark_red 50%,
       $light_red 50.1%
     );
-
     .trash {
       font-size: 1.6em;
       position: absolute;
@@ -166,6 +174,20 @@ export default {
       transition: 0.2s all;
       &:hover {
         transform: scale(0.9);
+      }
+    }
+    .reset {
+      font-size: 1em;
+      letter-spacing: 0.1em;
+      position: absolute;
+      bottom: -2em;
+      left: 0em;
+      color: $white;
+      font-weight: 300;
+      cursor: pointer;
+      transition: 0.2s all;
+      &:hover {
+        transform: scale(0.93);
       }
     }
     @include borderRadius(0.2em);

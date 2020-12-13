@@ -30,6 +30,7 @@ export default {
     Register,
   },
   mounted() {
+    console.log(this.$store);
     if (this.$store.state.authentication.status.loggedIn) router.push("/panel");
   },
 };
