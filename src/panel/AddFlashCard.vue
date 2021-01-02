@@ -111,7 +111,10 @@ export default {
       }
     },
     switchSize(e, w) {
-      if ((e.keyCode == 67 || e.keyCode == 86) && this.saved) {
+      if (
+        (e.keyCode == 67 || e.keyCode == 86 || e.keyCode == 65) &&
+        this.saved
+      ) {
         this.combination = true;
       }
       if (e.keyCode == 18 && this.saved) {
@@ -220,9 +223,11 @@ export default {
       }
 
       if (e.keyCode == 17) {
-        this.saved = true;
         this.combination = false;
         this.saved = false;
+      }
+      if (e.keyCode == 18) {
+        this.combination = true;
       }
     },
     focusOnArea(id) {
