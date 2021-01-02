@@ -1,5 +1,24 @@
 <template>
   <div id="panel">
+    <div
+      class="pomodoroPopup"
+      v-on:click="goToPomodoro"
+      v-bind:class="{ changeColor: this.$store.state.background == 'pomodoro' }"
+    >
+      <div class="squares" v-if="this.$store.state.background == 'pomodoro'">
+        <div class="line">
+          <div class="box"></div>
+          <div class="box"></div>
+        </div>
+        <div class="line">
+          <div class="box"></div>
+          <div class="box"></div>
+        </div>
+      </div>
+      <span class="clock" v-if="this.$store.state.background != 'pomodoro'">
+        <font-awesome-icon icon="stopwatch"></font-awesome-icon>
+      </span>
+    </div>
     <Navigation />
     <div v-if="!addingFlashCard && !reviseFlashCard">
       <draggable
@@ -33,6 +52,7 @@
     <AddGroup v-if="newGroup || editGroup" v-bind:edit="editGroup" />
     <AddFlashCard v-if="addingFlashCard" />
     <ReviseCard v-if="reviseFlashCard" />
+    <Pomodoro v-if="this.$store.state.background == 'pomodoro'" />
   </div>
 </template>
 
@@ -42,6 +62,7 @@ import CardGroup from "./CardGroup";
 import AddGroup from "./AddGroup";
 import AddFlashCard from "./AddFlashCard";
 import ReviseCard from "./ReviseCard";
+import Pomodoro from "../start/Pomodoro";
 export default {
   name: "Panel",
   data: function() {
@@ -113,7 +134,14 @@ export default {
       }, 70);
     },
   },
-  components: { Navigation, CardGroup, AddGroup, AddFlashCard, ReviseCard },
+  components: {
+    Navigation,
+    CardGroup,
+    AddGroup,
+    AddFlashCard,
+    ReviseCard,
+    Pomodoro,
+  },
   methods: {
     checkMove(e) {
       return e.to.children.length < 10;
@@ -130,6 +158,11 @@ export default {
     updateDatabase() {
       const { dispatch } = this.$store;
       dispatch("cardgroups/moveCardGroups", this.cardGroupColumns);
+    },
+    goToPomodoro() {
+      if (this.$store.state.background != "pomodoro")
+        this.$store.dispatch("changeBackground", "pomodoro");
+      else this.$store.dispatch("changeBackground", "main");
     },
   },
   mounted() {
@@ -152,6 +185,59 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   background: #1a1a1d;
 
+  .pomodoroPopup {
+    position: fixed;
+    bottom: 3.45em;
+    left: -0.3em;
+    height: 3em;
+    width: 3.5em;
+    padding: 0.2em 0.7em 0.2em 0.9em;
+    background: $light_red;
+    color: white;
+    font-size: 1.15em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+
+    &.changeColor {
+      background: $v_light_red;
+      z-index: 30;
+    }
+    .squares {
+      display: flex;
+      flex-direction: column;
+      width: 84%;
+      min-height: 95%;
+      .line {
+        @include flexCenter();
+        min-width: 90%;
+        min-height: 45%;
+        .box {
+          min-width: 40%;
+          margin-left: 7%;
+          background: white;
+          min-height: 85%;
+          margin-top: 10%;
+        }
+        &:nth-child(2) {
+          margin-top: 3%;
+        }
+      }
+    }
+    .clock {
+      font-size: 2.3em;
+      margin-top: 0.1em;
+      color: white;
+      z-index: 1;
+    }
+    @include flexCenter();
+    flex-direction: column;
+    transition: all 0.2s;
+    @include borderRadius(0.24em);
+    &:hover {
+      cursor: pointer;
+      padding-left: 1.8em;
+    }
+  }
   Navigation {
     position: fixed;
     top: 0;

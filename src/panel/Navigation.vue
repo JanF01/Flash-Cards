@@ -8,14 +8,22 @@
       <div
         class="arrow left"
         v-on:click="moveColumnsLeft()"
-        v-if="!cards && !reviewingCards"
+        v-if="
+          !cards &&
+            !reviewingCards &&
+            this.$store.state.background != 'pomodoro'
+        "
       >
         <font-awesome-icon icon="angle-left" />
       </div>
       <div
         class="arrow right"
         v-on:click="moveColumnsRight()"
-        v-if="!cards && !reviewingCards"
+        v-if="
+          !cards &&
+            !reviewingCards &&
+            this.$store.state.background != 'pomodoro'
+        "
       >
         <font-awesome-icon icon="angle-right" />
       </div>
@@ -68,10 +76,26 @@
         class="mobile-logo"
         v-on:click="changeNewGroupState(false)"
       />
-      <div class="arrow left" v-on:click="moveColumnsLeft()" v-if="!cards">
+      <div
+        class="arrow left"
+        v-on:click="moveColumnsLeft()"
+        v-if="
+          !cards &&
+            !reviewingCards &&
+            this.$store.state.background != 'pomodoro'
+        "
+      >
         <font-awesome-icon icon="angle-left" />
       </div>
-      <div class="arrow right" v-on:click="moveColumnsRight()" v-if="!cards">
+      <div
+        class="arrow right"
+        v-on:click="moveColumnsRight()"
+        v-if="
+          !cards &&
+            !reviewingCards &&
+            this.$store.state.background != 'pomodoro'
+        "
+      >
         <font-awesome-icon icon="angle-right" />
       </div>
       <div

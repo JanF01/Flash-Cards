@@ -1,5 +1,16 @@
 <template>
   <div class="pomodoro">
+    <div class="sessions">
+      <div
+        class="ball"
+        v-for="(session, index) of sessionsArray"
+        :key="index"
+        :style="{
+          left: session.left,
+          top: session.right,
+        }"
+      ></div>
+    </div>
     <div class="main-timers">
       <div class="focus-time">
         <h3>FOCUS TIME</h3>
@@ -8,17 +19,27 @@
           MINUTES
         </div>
         <div class="arrows">
-          <img src="../assets/arrowup_yellow.png" v-on:click="focusTime++" />
-          <img src="../assets/arrowdown_yellow.png" v-on:click="focusTime--" />
+          <img src="../assets/arrowup_yellow.png" v-on:click="focusHigher" />
+          <img src="../assets/arrowdown_yellow.png" v-on:click="focusLower" />
         </div>
       </div>
-      <div class="timer" v-on:click="startTime">
-        <span class="start" v-if="!session && !this.break"
+      <div
+        class="timer"
+        v-on:click="
+          () => {
+            if (this.time == 0) this.startTime();
+          }
+        "
+      >
+        <span class="start" v-if="!session && !inBreak"
           >START<br />
           SESSION</span
         >
-        <span class="start time" v-if="session || this.break"
-          >{{ timeString }}
+        <span class="start" v-if="session || inBreak"
+          ><span v-if="session">SESSION</span>
+          <span v-if="inBreak">BREAK</span>
+          <br />
+          {{ timeString }}
         </span>
       </div>
       <div class="break-time">
@@ -28,14 +49,15 @@
           MINUTES
         </div>
         <div class="arrows">
-          <img src="../assets/arrowup_blue.png" v-on:click="breakTime++" />
-          <img src="../assets/arrowdown_blue.png" v-on:click="breakTime--" />
+          <img src="../assets/arrowup_blue.png" v-on:click="breakHigher" />
+          <img src="../assets/arrowdown_blue.png" v-on:click="breakLower" />
         </div>
       </div>
     </div>
     <div class="long-break">
       <h3>LONG BRAKE</h3>
     </div>
+    <audio preload="auto" src="../assets/bell.wav"></audio>
   </div>
 </template>
 
@@ -44,27 +66,32 @@ export default {
   name: "Pomodoro",
   data: () => {
     return {
-      focusTime: 30,
-      breakTime: 10,
-      time: 1800,
+      focusTime: 1,
+      breakTime: 2,
+      time: 0,
       timeH: 0,
       timeM: 0,
       timeS: 0,
       timeString: "",
+      sessionsSinceStart: 0,
+      sessionsArray: [],
       session: false,
-      break: false,
+      inBreak: false,
       interval: null,
+      endAudio: null,
     };
   },
   methods: {
     startTime() {
       if (!this.session) {
         this.session = true;
-        this.break = false;
+        this.inBreak = false;
         this.time = this.focusTime * 60;
+        this.sessionsSinceStart++;
+        this.$cookie.set("sessionsAmount", this.sessionsSinceStart, 365);
       } else {
         this.session = false;
-        this.break = true;
+        this.inBreak = true;
         this.time = this.breakTime * 60;
       }
 
@@ -106,6 +133,11 @@ export default {
         this.timeS = 59;
       }
 
+      if (this.timeS <= -1) {
+        this.endTime();
+        return;
+      }
+
       let h = this.timeH;
       let m = this.timeM;
       let s = this.timeS;
@@ -122,6 +154,70 @@ export default {
 
       this.timeString = this.timeH != 0 ? h + ":" + m + ":" + s : m + ":" + s;
     },
+    endTime() {
+      clearInterval(this.interval);
+      this.endAudio.play();
+      if (this.session) {
+        this.startTime();
+      } else {
+        this.time = 0;
+        this.session = false;
+        this.inBreak = false;
+      }
+    },
+    breakLower() {
+      if (this.breakTime > 0) {
+        this.breakTime--;
+      }
+      this.$cookie.set("breakTime", this.breakTime, 96);
+    },
+    breakHigher() {
+      this.breakTime++;
+      this.$cookie.set("breakTime", this.breakTime, 96);
+    },
+    focusLower() {
+      if (this.focusTime > 0) {
+        this.focusTime--;
+      }
+      this.$cookie.set("focusTime", this.focusTime, 96);
+    },
+    focusHigher() {
+      this.focusTime++;
+      this.$cookie.set("focusTime", this.focusTime, 96);
+    },
+  },
+  mounted() {
+    this.endAudio = document.getElementsByTagName("audio")[0];
+
+    this.endAudio.volume = 0.3;
+
+    let focus = this.$cookie.get("focusTime");
+    let brek = this.$cookie.get("breakTime");
+    let sessions = this.$cookie.get("sessionsAmount");
+    if (focus === null) {
+      this.focusTime = 30;
+    } else {
+      this.focusTime = focus;
+    }
+
+    if (brek === null) {
+      this.breakTime = 10;
+    } else {
+      this.breakTime = brek;
+    }
+
+    if (sessions === null) {
+      this.sessionsSinceStart = 0;
+      this.sessionsArray.length = 0;
+    } else {
+      this.sessionsSinceStart = sessions;
+      for (let i = 0; i < this.sessionsSinceStart.length; i++) {
+        this.sessionsArray.push({
+          left: Math.random() * 98 + "%",
+          right: Math.random() * 98 + "%",
+        });
+      }
+    }
   },
 };
 </script>
@@ -137,6 +233,26 @@ export default {
   background: $dark_red;
   font-family: "Manrope", sans-serif;
   color: white;
+
+  .sessions {
+    position: absolute;
+    top: 84.5vh;
+    left: 5%;
+    width: 95%;
+    height: 10vh;
+    z-index: 10;
+    .ball {
+      position: absolute;
+      z-index: 19;
+      min-width: 1.3%;
+      padding-top: 1.3%;
+      @include borderRadius(50%);
+      background: radial-gradient(
+        rgba(107, 209, 12, 0.803) 10%,
+        rgba(25, 218, 138, 0.784) 60%
+      );
+    }
+  }
   @include flexCenter();
   h3 {
     position: absolute;
@@ -151,6 +267,7 @@ export default {
     width: 60%;
     display: flex;
     align-items: center;
+    z-index: 24;
 
     @include noUserSelect();
     .focus-time {
@@ -159,6 +276,7 @@ export default {
         rgba(130, 192, 16, 0.551),
         rgba(130, 192, 16, 0.321)
       );
+      z-index: 24;
       width: 22.5%;
       padding-top: 22.5%;
       @include borderRadius(50%);
@@ -224,6 +342,7 @@ export default {
       @include borderRadius(50%);
       margin-left: calc(3.5% - 1.2em);
       position: relative;
+      z-index: 24;
       .arrows {
         span {
           background: rgba(13, 123, 156, 0.575);

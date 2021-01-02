@@ -1,6 +1,6 @@
 <template>
   <div id="revise">
-    <div class="fake-textarea" v-html="content"></div>
+    <div class="fake-textarea" v-html="'<pre>' + content + '</pre>'"></div>
     <div class="buttons" v-if="end">
       <button v-on:click="isHard">Hard</button>
       <button v-on:click="isOk">OK</button>
@@ -129,14 +129,26 @@ export default {
 sup {
   font-size: 80%;
   position: relative;
-  top: -0.35em;
+  top: -0.3em;
   font-weight: 500;
 }
 sub {
   font-size: 80%;
   position: relative;
-  top: 0.35em;
+  top: 0.3em;
   font-weight: 500;
+}
+
+pre {
+  font-size: 0.95em;
+  font-family: "Manrope", sans-serif;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  text-align: center;
 }
 
 #revise {
@@ -145,7 +157,8 @@ sub {
   flex-direction: column;
   .fake-textarea {
     background: $white;
-    width: 36%;
+    width: 40%;
+    word-wrap: wrap;
     height: 55vh;
     margin-top: 12vh;
     color: black;

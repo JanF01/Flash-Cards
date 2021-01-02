@@ -1,9 +1,7 @@
 <template>
   <div id="list">
     <div class="id">#{{ id + 1 }}</div>
-    <div class="title">
-      {{ title }}
-    </div>
+    <div class="title" v-html="title"></div>
     <div class="edit">
       <span v-on:click="editFlashcard"
         ><font-awesome-icon icon="edit"></font-awesome-icon

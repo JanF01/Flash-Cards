@@ -4,6 +4,7 @@ import store from "./store";
 import { router } from "./helpers";
 import VueRouter from "vue-router";
 import draggable from "vuedraggable";
+import VueCookie from "vue-cookie";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -25,6 +26,7 @@ import {
   faBell,
   faArrowCircleUp,
   faArrowCircleDown,
+  faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import VueToast from "vue-toast-notification";
@@ -50,11 +52,13 @@ library.add(
   faPlusSquare,
   faBell,
   faArrowCircleUp,
-  faArrowCircleDown
+  faArrowCircleDown,
+  faStopwatch
 );
 
 Vue.use(VueToast);
 Vue.use(VueRouter);
+Vue.use(VueCookie);
 
 Vue.component("draggable", draggable);
 

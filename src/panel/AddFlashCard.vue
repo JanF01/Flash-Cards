@@ -31,6 +31,7 @@
             v-bind:placeholder="oneside ? 'Content' : 'Question'"
             v-model="question"
             @keyup="autoGrow($event, 1)"
+            @keydown="controlCombination($event)"
           ></textarea>
           <div class="size">
             <span>CTRL</span><span v-if="sizeOne == 1">AA</span>
@@ -50,6 +51,7 @@
             placeholder="Answer"
             v-model="answer"
             @keyup="autoGrow($event, 2)"
+            @keydown="controlCombination($event)"
           ></textarea>
           <div class="size">
             <span>CTRL</span><span v-if="sizeTwo == 1">AA</span>
@@ -89,6 +91,8 @@ export default {
       list: false,
       sizeOne: 1,
       sizeTwo: 1,
+      combination: false,
+      saved: false,
     };
   },
   methods: {
@@ -101,9 +105,46 @@ export default {
         this.$store.state.flashcards.back = this.answer;
       }, 10);
     },
-
+    controlCombination(e) {
+      if (e.keyCode == 17) {
+        this.saved = true;
+      }
+    },
     switchSize(e, w) {
-      if (e.keyCode != 17) {
+      if ((e.keyCode == 67 || e.keyCode == 86) && this.saved) {
+        this.combination = true;
+      }
+      if (e.keyCode == 18 && this.saved) {
+        if (w == 1) {
+          switch (this.sizeOne) {
+            case 0:
+              this.sizeOne = 2;
+              break;
+            case 1:
+              this.sizeOne = 0;
+              break;
+            case 2:
+              this.sizeOne = 1;
+              break;
+          }
+        }
+        if (w == 2) {
+          switch (this.sizeTwo) {
+            case 0:
+              this.sizeTwo = 2;
+              break;
+            case 1:
+              this.sizeTwo = 0;
+              break;
+            case 2:
+              this.sizeTwo = 1;
+              break;
+          }
+        }
+        this.saved = false;
+      }
+
+      if (e.keyCode !== 17 && e.keyCode !== 18) {
         if (w == 1 && this.sizeOne == 2 && e.keyCode != 8) {
           let char = this.question.substr(
             this.question.length - 1,
@@ -146,7 +187,8 @@ export default {
             "</sub>";
         }
       }
-      if (e.keyCode == 17 || e.which == 17) {
+
+      if (e.key === "Control" && e.keyCode !== 18 && !this.combination) {
         if (w == 1) {
           switch (this.sizeOne) {
             case 0:
@@ -173,6 +215,14 @@ export default {
               break;
           }
         }
+        this.combination = false;
+        this.saved = false;
+      }
+
+      if (e.keyCode == 17) {
+        this.saved = true;
+        this.combination = false;
+        this.saved = false;
       }
     },
     focusOnArea(id) {

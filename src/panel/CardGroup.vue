@@ -123,6 +123,12 @@ export default {
         this.timeS = 59;
       }
 
+      if (this.timeS < 0) {
+        this.timestamp = true;
+        clearInterval(this.interval);
+        return;
+      }
+
       let h = this.timeH;
       let m = this.timeM;
       let s = this.timeS;
@@ -198,8 +204,10 @@ export default {
           ? hours + ":" + minutes + ":" + seconds
           : minutes + ":" + seconds;
 
-      clearInterval(this.interval);
-      this.interval = setInterval(this.addTime, 1000);
+      if (!this.timestamp) {
+        clearInterval(this.interval);
+        this.interval = setInterval(this.addTime, 1000);
+      }
     },
   },
   watch: {
