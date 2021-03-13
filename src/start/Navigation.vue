@@ -80,6 +80,9 @@ ul.navigation {
     top: 1.5em;
     left: 1.5em;
     width: 3em;
+    &:hover{
+      cursor:pointer;
+    }
   }
   li {
     width: 4.5em;

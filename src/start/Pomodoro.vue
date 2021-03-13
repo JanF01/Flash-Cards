@@ -211,7 +211,7 @@ export default {
       this.sessionsArray.length = 0;
     } else {
       this.sessionsSinceStart = sessions;
-      for (let i = 0; i < this.sessionsSinceStart.length; i++) {
+      for (let i = 0; i < this.sessionsSinceStart; i++) {
         this.sessionsArray.push({
           left: Math.random() * 98 + "%",
           right: Math.random() * 98 + "%",

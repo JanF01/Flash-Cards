@@ -22,11 +22,11 @@
     <Navigation />
     <div v-if="!addingFlashCard && !reviseFlashCard">
       <draggable
-        v-for="cardGroupColumn of cardGroupColumns.slice(
+        v-for="(cardGroupColumn, index) of cardGroupColumns.slice(
           this.$store.state.cardgroups.offset,
           this.$store.state.cardgroups.offset + 5
         )"
-        :key="cardGroupColumn.id"
+        :key="index"
         :list="cardGroupColumn"
         tag="ul"
         group="columns"
@@ -68,7 +68,27 @@ export default {
   data: function() {
     return {
       drag: false,
-      cardGroupColumns: [[], [], [], [], [], [], [], [], [], []],
+      cardGroupColumns: [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+      ],
       //   [[
       //     { id: 2, name: "Matematyka Geometria", color: "#123091CF" },
       //     { id: 3, name: "Matematyka Logarytmy", color: "#123091CF" },

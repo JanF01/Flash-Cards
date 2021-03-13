@@ -112,7 +112,7 @@ export default {
     },
     switchSize(e, w) {
       if (
-        (e.keyCode == 67 || e.keyCode == 86 || e.keyCode == 65) &&
+        [67, 86, 65, 76, 83, 79, 90, 88, 69, 78].indexOf(e.keyCode) != -1 &&
         this.saved
       ) {
         this.combination = true;

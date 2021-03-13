@@ -60,8 +60,8 @@ export default {
   },
   computed: {
     titleChanged() {
-      if (this.title.length > 24) {
-        return this.title.substr(0, 24) + "...";
+      if (this.title.length > 30) {
+        return this.title.substr(0, 30) + "...";
       } else {
         return this.title;
       }

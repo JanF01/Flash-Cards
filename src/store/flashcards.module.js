@@ -20,8 +20,10 @@ export const flashcards = {
   getters: {
     getSoonest: (state) => (data) => {
       for (let i = 0; i < state.soonest.length; i++) {
-        if (state.soonest[i].card_group_id == data.group_id) {
-          return state.soonest[i];
+        if (state.soonest[i] !== null) {
+          if (state.soonest[i].card_group_id == data.group_id) {
+            return state.soonest[i];
+          }
         }
       }
     },

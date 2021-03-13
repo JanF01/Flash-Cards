@@ -55,7 +55,7 @@
           >FLASHCARD<br />
           LIST</span
         >
-        <div class="bar" v-for="item of [0, 1, 2]" :key="item.id">
+        <div class="bar" v-for="(item, index) of [0, 1, 2]" :key="index">
           <div class="srect"></div>
           <div class="rect"></div>
         </div>
