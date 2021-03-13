@@ -1,1 +1,1 @@
-export const baseUrl = "http://localhost/flashcards";
+export const baseUrl = "johnviolet.pl";
