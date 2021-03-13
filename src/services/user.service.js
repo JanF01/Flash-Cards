@@ -13,7 +13,7 @@ function login(username, password) {
     body: JSON.stringify({ username, password }),
   };
 
-  return fetch(`${baseUrl}/users/login`, requestOptions)
+  return fetch(`${baseUrl}/users/login.php`, requestOptions)
     .then(handleResponse)
     .then((user) => {
       if (user.token) {
