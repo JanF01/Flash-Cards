@@ -2,8 +2,8 @@
 
 $dbhost = "127.0.0.1";
 $dbname = "flashcards";
-$dbuser = "admin";
-$dbpassword = "zone";
+$dbuser = "root";
+$dbpassword = "zonetoit";
 
 try{
 $db_connection = new PDO("mysql:host=".$dbhost.";dbname=".$dbname, $dbuser, $dbpassword);
